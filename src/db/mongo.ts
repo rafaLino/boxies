@@ -6,20 +6,18 @@ if (!process.env.MONGODB_URI) {
 
 const uri = process.env.MONGODB_URI;
 
-declare global {
-    // eslint-disable-next-line no-var
-    var mongoose: Mongoose;
+const globalWithMongo = global as typeof globalThis & {
+    _mongoose: Mongoose;
 }
 
-
 async function dbConnect() {
-    if (global.mongoose) {
-        return global.mongoose;
+    if (globalWithMongo._mongoose) {
+        return globalWithMongo._mongoose;
     }
 
-    global.mongoose = await mongoose.connect(uri);
+    globalWithMongo._mongoose = await mongoose.connect(uri);
 
-    return global.mongoose;
+    return globalWithMongo._mongoose;
 }
 
 

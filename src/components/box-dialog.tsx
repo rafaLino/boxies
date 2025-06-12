@@ -144,59 +144,65 @@ export function BoxDialog() {
                   </FormItem>
                 )}
               />
-
-              {fields.map(({ id }, index) => (
-                <div key={id} className='flex flex-col gap-3'>
-                  <div className='flex flex-row w-full justify-between'>
+              <div className='grid gap-3 mt-2 p-2 max-h-80 overflow-x-auto scrollbar'>
+                {fields.map(({ id }, index) => (
+                  <div key={id} className='flex flex-col gap-3'>
+                    <div className='flex flex-row w-full justify-between'>
+                      <FormField
+                        control={form.control}
+                        name={`contents.${index}.label`}
+                        render={({ field }) => (
+                          <FormItem className='grid gap-1'>
+                            <FormControl>
+                              <Input placeholder='Label' {...field} />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                      <div className='flex'>
+                        <Button
+                          tabIndex={-1}
+                          type='button'
+                          hidden={index === 0}
+                          data-index={index}
+                          variant='ghost'
+                          className='text-red-500'
+                          onClick={() => remove(index)}
+                        >
+                          <MinusCircle />
+                        </Button>
+                        <Button
+                          tabIndex={-1}
+                          type='button'
+                          hidden={index !== fields.length - 1}
+                          variant='ghost'
+                          onClick={() => append({ label: '', value: '' })}
+                        >
+                          <PlusCircle />
+                        </Button>
+                      </div>
+                    </div>
                     <FormField
                       control={form.control}
-                      name={`contents.${index}.label`}
+                      name={`contents.${index}.value`}
                       render={({ field }) => (
-                        <FormItem className='grid gap-1'>
-                          <FormControl>
-                            <Input placeholder='Label' {...field} />
+                        <FormItem className='grid gap-1 w-full'>
+                          <FormControl className='w-full'>
+                            <Textarea placeholder='Value' rows={1} className='resize-none' {...field} />
                           </FormControl>
                         </FormItem>
                       )}
                     />
-                    <div className='flex'>
-                      <Button
-                        hidden={index === 0}
-                        data-index={index}
-                        variant='ghost'
-                        className='text-red-500'
-                        onClick={() => remove(index)}
-                      >
-                        <MinusCircle />
-                      </Button>
-                      <Button
-                        hidden={index !== fields.length - 1}
-                        variant='ghost'
-                        onClick={() => append({ label: '', value: '' })}
-                      >
-                        <PlusCircle />
-                      </Button>
-                    </div>
+
+
                   </div>
-                  <FormField
-                    control={form.control}
-                    name={`contents.${index}.value`}
-                    render={({ field }) => (
-                      <FormItem className='grid gap-1 w-full'>
-                        <FormControl className='w-full'>
-                          <Textarea placeholder='Value' rows={1} className='resize-none ' {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                ))}
 
-
-                </div>
-              ))}
+              </div>
             </div>
             <DialogFooter className='mt-4'>
               <DialogClose asChild>
-                <Button variant='outline'>Cancel</Button>
+                <Button tabIndex={1} type='button' variant='outline'>Cancel</Button>
               </DialogClose>
               <Button type='submit' disabled={disabledSubmit}>
                 Save changes

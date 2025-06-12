@@ -1,10 +1,10 @@
 import { replaceContent } from '@/lib/replace-content';
-import { cn, formatNumber, getColorContrast } from '@/lib/utils';
+import { cn, getColorContrast } from '@/lib/utils';
 import { TBox } from '@/types/box.type';
-import { FC, useMemo } from 'react';
+import { FC, useCallback, useMemo } from 'react';
+import { Content } from './box-content';
 import { BoxContextMenu } from './box-context-menu';
-import { Card, CardDescription, CardTitle } from './ui/card';
-import { Label } from './ui/label';
+import { Card, CardTitle } from './ui/card';
 
 type BoxProps = {
   onEdit?: (id: string) => void;
@@ -17,26 +17,22 @@ export const Box: FC<BoxProps> = ({ id, name, color, contents, onEdit, onDelete 
     return contrast === 'dark' ? 'text-gray-900' : 'text-gray-100';
   }, [contrast]);
 
-  const handleContextMenuClick = (action: 'edit' | 'delete') => {
+  const handleContextMenuClick = useCallback((action: 'edit' | 'delete') => {
     const fn = action === 'edit' ? onEdit : onDelete;
     fn?.(id);
-  }
+  }, [onEdit, onDelete, id])
 
   return (
     <Card
       className={cn('relative flex flex-col items-center justify-center min-h-40 shadow-lg rounded-lg p-4', textColor)}
       style={{ backgroundColor: color }}
     >
-      <BoxContextMenu onClick={handleContextMenuClick}/>
+      <BoxContextMenu onClick={handleContextMenuClick} />
       <CardTitle className='text-2xl font-bold mb-2 capitalize'>{name}</CardTitle>
-      <div className='flex flex-col items-center justify-between mb-2 gap-2 w-full'>
-        {contentArray.map(([key, value]) => (
-          <div key={key} className='flex flex-row gap-2 justify-between w-full'>
-            <Label className={cn('capitalize', textColor)}>{key}</Label>
-            <CardDescription className={textColor}>{formatNumber(value)}</CardDescription>
-          </div>
-        ))}
+      <div className='flex flex-col minmax-0 flex-shrink-1 flex-grow-1 items-center justify-between gap-2 w-full'>
+        {contentArray.map(([key, value]) => <Content key={key} label={key} value={value} color={textColor} />)}
       </div>
     </Card>
   );
 };
+

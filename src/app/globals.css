@@ -191,6 +191,28 @@
   }
 }
 
+@layer utilities {
+  .scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .scrollbar::-webkit-scrollbar-track {
+    border-radius: 100vh;
+    background: var(--color-sidebar-accent);
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-gray-400);
+    border-radius: 100vh;
+    border: 3px solid var(--color-gray-400);
+  }
+
+  .scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gray-400);
+  }
+}
+
 .color-picker .react-colorful {
   width: auto;
   height: 120px;

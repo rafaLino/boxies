@@ -29,6 +29,6 @@ export function getColorContrast(hex: string) {
   const b = parseInt(hex.substring(4, 6), 16);
 
   const brightness = (r * 0.299 + g * 0.587 + b * 0.114);
-  
-  return (brightness > 60) ? 'bright' : 'dark';
+
+  return (brightness < 120) ? 'bright' : 'dark';
 }

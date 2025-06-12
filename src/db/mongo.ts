@@ -1,24 +1,41 @@
-import mongoose, { Mongoose } from 'mongoose';
-
-if (!process.env.MONGODB_URI) {
-    throw new Error('Missing environment variable: "MONGODB_URI"');
+import mongoose, { Mongoose } from "mongoose";
+declare global {
+    // eslint-disable-next-line no-var
+    var mongoose: { conn: Mongoose | null, promise: Promise<Mongoose> | null };
 }
 
-const uri = process.env.MONGODB_URI;
+let cached = global.mongoose;
 
-const globalWithMongo = global as typeof globalThis & {
-    _mongoose: Mongoose;
+if (!cached) {
+    cached = global.mongoose = { conn: null, promise: null };
 }
 
 async function dbConnect() {
-    if (globalWithMongo._mongoose) {
-        return globalWithMongo._mongoose;
+    const MONGODB_URI = process.env.MONGODB_URI!;
+
+    if (!MONGODB_URI) {
+        throw new Error(
+            'Missing environment variable: "MONGODB_URI"',
+        );
     }
 
-    globalWithMongo._mongoose = await mongoose.connect(uri);
+    if (cached.conn) {
+        return cached.conn;
+    }
+    if (!cached.promise) {
+        const opts = {
+            bufferCommands: false,
+        };
+        cached.promise = mongoose.connect(MONGODB_URI, opts);
+    }
+    try {
+        cached.conn = await cached.promise;
+    } catch (e) {
+        cached.promise = null;
+        throw e;
+    }
 
-    return globalWithMongo._mongoose;
+    return cached.conn;
 }
-
 
 export default dbConnect;

@@ -1,9 +1,11 @@
 'use server'
 import { UserModel } from '@/db/models'
+import dbConnect from '@/db/mongo'
 import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 
 export async function signIn(formData: FormData) {
+    await dbConnect()
     const login = formData.get('login')
     const password = formData.get('password')
     if (!login || !password) {

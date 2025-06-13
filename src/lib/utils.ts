@@ -20,6 +20,18 @@ export function formatNumber(value: string): string {
   }).format(parseFloat(value))
 }
 
+const dateFormatter = new Intl.DateTimeFormat('pt', {
+  year: '2-digit',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: true,
+})
+export function formatDate(value: Date | undefined): string {
+  return dateFormatter.format(value);
+}
+
 
 export function getColorContrast(hex: string) {
   hex = hex.replace(/^#/, '');

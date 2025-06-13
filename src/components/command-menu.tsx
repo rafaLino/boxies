@@ -42,9 +42,9 @@ export function CommandMenu() {
               <Box />
               <span>Create new box</span>
             </CommandItem>
-            <CommandItem>
+            <CommandItem disabled>
               <Calculator />
-              <span>Calculator</span>
+              <span className='line-through'>Calculator</span>
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />

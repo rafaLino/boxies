@@ -1,12 +1,9 @@
 'use server'
 import { BoxModel } from '@/db/models';
 import { TBox } from '@/types/box.type';
+import { contentsToMap, mapToContents } from './content-mapper';
 
 
-const mapContents = (contents: Map<string, string>) => {
-    const content = Object.fromEntries(contents);
-    return content;
-}
 export async function getBoxes() {
     const boxies = await BoxModel.find()
 
@@ -14,7 +11,8 @@ export async function getBoxes() {
         id: box._id.toString(),
         name: box.name,
         color: box.color,
-        contents: mapContents(box.contents),
+        updatedAt: box.updatedAt,
+        contents: mapToContents(box.contents),
         meta: {
             i: box.meta.i,
             x: box.meta.x,
@@ -30,7 +28,7 @@ export async function addBox(box: TBox) {
         _id: box.id,
         name: box.name,
         color: box.color,
-        contents: new Map(Object.entries(box.contents)),
+        contents: contentsToMap(box.contents),
         meta: {
             i: box.meta.i,
             x: box.meta.x,
@@ -46,9 +44,10 @@ export async function updateBox(box: TBox) {
     const updatedBox = await BoxModel.findByIdAndUpdate(
         box.id,
         {
+            updatedAt: Date.now,
             name: box.name,
             color: box.color,
-            contents: new Map(Object.entries(box.contents)),
+            contents: contentsToMap(box.contents),
             meta: {
                 i: box.meta.i,
                 x: box.meta.x,

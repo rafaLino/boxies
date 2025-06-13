@@ -28,7 +28,7 @@ const formSchema = z.object({
   contents: z
     .array(
       z.object({
-        label: z.string(),
+        key: z.string(),
         value: z.string(),
       })
     )
@@ -46,7 +46,7 @@ const defaultMetadata = {
 const defaultValues = {
   name: '',
   color: '#ffffff',
-  contents: [{ label: '', value: '' }],
+  contents: [{ key: '', value: '' }],
 };
 
 type FormData = z.infer<typeof formSchema>;
@@ -79,7 +79,7 @@ export function BoxDialog() {
       reset({
         name: selectedBox.name,
         color: selectedBox.color,
-        contents: Object.entries(selectedBox.contents).map(([label, value]) => ({ label, value })),
+        contents: (selectedBox.contents).map(({ key, value }) => ({ key, value })),
       });
     } else {
       reset(defaultValues);
@@ -96,10 +96,7 @@ export function BoxDialog() {
       id,
       name: data.name,
       color: data.color,
-      contents: data.contents.reduce((acc, { label, value }) => {
-        acc[label] = value;
-        return acc;
-      }, {} as Record<string, string>),
+      contents: data.contents,
       meta,
     };
     const action = isEditing ? updateBox : addBox;
@@ -150,7 +147,7 @@ export function BoxDialog() {
                     <div className='flex flex-row w-full justify-between'>
                       <FormField
                         control={form.control}
-                        name={`contents.${index}.label`}
+                        name={`contents.${index}.key`}
                         render={({ field }) => (
                           <FormItem className='grid gap-1'>
                             <FormControl>
@@ -176,7 +173,7 @@ export function BoxDialog() {
                           type='button'
                           hidden={index !== fields.length - 1}
                           variant='ghost'
-                          onClick={() => append({ label: '', value: '' })}
+                          onClick={() => append({ key: '', value: '' })}
                         >
                           <PlusCircle />
                         </Button>

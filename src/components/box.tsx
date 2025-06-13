@@ -1,4 +1,3 @@
-import { replaceContent } from '@/lib/replace-content';
 import { cn, getColorContrast } from '@/lib/utils';
 import { TBox } from '@/types/box.type';
 import { FC, useCallback, useMemo } from 'react';
@@ -11,7 +10,6 @@ type BoxProps = {
   onDelete?: (id: string) => void;
 } & Omit<TBox, 'meta'>;
 export const Box: FC<BoxProps> = ({ id, name, color, contents, onEdit, onDelete }) => {
-  const contentArray = useMemo(() => Object.entries(replaceContent(contents)), [contents]);
   const contrast = useMemo(() => getColorContrast(color), [color]);
   const textColor = useMemo(() => {
     return contrast === 'dark' ? 'text-gray-900' : 'text-gray-100';
@@ -30,9 +28,8 @@ export const Box: FC<BoxProps> = ({ id, name, color, contents, onEdit, onDelete 
       <BoxContextMenu onClick={handleContextMenuClick} />
       <CardTitle className='text-2xl font-bold mb-2 capitalize'>{name}</CardTitle>
       <div className='flex flex-col minmax-0 flex-shrink-1 flex-grow-1 items-center justify-between gap-2 w-full'>
-        {contentArray.map(([key, value]) => <Content key={key} label={key} value={value} color={textColor} />)}
+        {contents.map(({ key, value, displayValue }) => <Content key={key} label={key} value={displayValue ?? value} color={textColor} />)}
       </div>
     </Card>
   );
 };
-

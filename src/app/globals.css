@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "react-grid-layout/css/styles.css"
-@import "react-resizable/css/styles.css"
+
+
 
 @custom-variant dark (&:is(.dark *));
 
@@ -185,6 +185,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
@@ -211,9 +212,18 @@
   .scrollbar::-webkit-scrollbar-thumb:hover {
     background: var(--color-gray-400);
   }
+
 }
 
 .color-picker .react-colorful {
   width: auto;
   height: 120px;
+}
+
+.react-grid-item.react-grid-placeholder {
+  background-color: transparent;
+}
+
+.react-resizable-handle.react-resizable-handle-se {
+  opacity: 0;
 }

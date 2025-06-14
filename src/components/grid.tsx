@@ -15,18 +15,21 @@ export const Grid = () => {
   return (
     <GridLayout
       compactType={null}
-      isResizable={true}
       preventCollision={true}
+      allowOverlap={false}
+      useCSSTransforms
       cols={12}
-      rowHeight={80}
+      rowHeight={105}
       width={1800}
       onLayoutChange={setLayout}
+      className='gridlayout'
     >
       {boxes.value?.map((box) => (
-        <div key={box.id} data-grid={box.meta}>
-          <Box {...box} onEdit={edit} onDelete={removeBox} />
+        <div className='h-1' key={box.id} data-grid={{ ...box.meta, minW: 2, minH: 2 }}>
+          <Box key={box.id} {...box} onEdit={edit} onDelete={removeBox} />
         </div>
       ))}
     </GridLayout>
   );
+
 };

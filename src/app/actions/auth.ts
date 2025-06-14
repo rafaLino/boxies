@@ -1,5 +1,5 @@
 'use server'
-import { UserModel } from '@/db/models'
+import { IUser, UserModel } from '@/db/models'
 import dbConnect from '@/db/mongo'
 import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
@@ -11,13 +11,12 @@ export async function signIn(formData: FormData) {
     if (!login || !password) {
         throw new Error('Login and password are required')
     }
-    const user = await UserModel.findOne({ login, password }).exec()
-
+    const user = await UserModel.findOne<IUser>({ login, password }).exec()
     if (!user) {
         throw new Error('Invalid login or password')
     }
 
-    await createSession(user._id)
+    await createSession(user._id.toString())
 
     redirect('/')
 }

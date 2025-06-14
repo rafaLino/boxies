@@ -1,6 +1,6 @@
 import ReactGridLayout from 'react-grid-layout';
 
-export type TBox = {
+export interface TBox {
     id: string;
     name: string;
     color: string;
@@ -10,12 +10,8 @@ export type TBox = {
 }
 
 export type TContent = {
+    label: string
     key: string;
     value: string;
-    displayValue?: string;
-}
-
-export type KeyValue = {
-    key: string;
-    value: string;
+    expression: string;
 }

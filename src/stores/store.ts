@@ -31,7 +31,7 @@ export const createBoxStore = (initialValue: ServerSideData) => {
         removeBox: effect(deleteBox),
         updateBox: effect(updateBox),
         setLayout: effect(setLayout),
-        boxes: query(getBoxes, s => [s.addBox, s.removeBox, s.updateBox], {
+        boxes: query(getBoxes, s => [s.addBox, s.updateBox, s.removeBox], {
             initialValue: initialValue.boxes,
         }),
     }))

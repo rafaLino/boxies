@@ -6,7 +6,7 @@ type Props = {
 export const CommandMenuKeydown: FC<Props> = ({ onKeyPress }) => {
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === 'c' && (e.metaKey || e.ctrlKey)) {
+      if (e.key === 'x' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         onKeyPress?.();
       }

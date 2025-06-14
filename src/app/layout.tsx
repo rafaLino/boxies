@@ -1,8 +1,9 @@
 import dbConnect from '@/db/mongo';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import './globals.css';
-
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],

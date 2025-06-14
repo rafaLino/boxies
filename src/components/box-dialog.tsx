@@ -28,8 +28,10 @@ const formSchema = z.object({
   contents: z
     .array(
       z.object({
-        key: z.string(),
+        key: z.string().regex(/(\$[a-zA-Z0-9]+)/, 'invalid key').describe('key start with $'),
+        label: z.string(),
         value: z.string(),
+        expression: z.string(),
       })
     )
     .min(1, 'At least one content is required'),
@@ -46,7 +48,7 @@ const defaultMetadata = {
 const defaultValues = {
   name: '',
   color: '#ffffff',
-  contents: [{ key: '', value: '' }],
+  contents: [{ label: '', key: '$1', value: '', expression: '' }],
 };
 
 type FormData = z.infer<typeof formSchema>;
@@ -58,6 +60,7 @@ export function BoxDialog() {
     const selectedBoxId = state.selectedBoxId;
     return selectedBoxId ? state.boxes.value?.find((box) => box.id === selectedBoxId) : undefined;
   });
+
   const setOpen = useBoxStore((state) => state.setBoxDialogOpen);
   const addBox = useBoxStore((state) => state.addBox.trigger);
   const form = useForm<FormData>({
@@ -79,7 +82,7 @@ export function BoxDialog() {
       reset({
         name: selectedBox.name,
         color: selectedBox.color,
-        contents: (selectedBox.contents).map(({ key, value }) => ({ key, value })),
+        contents: selectedBox.contents,
       });
     } else {
       reset(defaultValues);
@@ -92,15 +95,12 @@ export function BoxDialog() {
     form.reset();
     const id = selectedBox?.id ?? generateId();
     const meta = selectedBox?.meta ?? { ...defaultMetadata, i: id };
-    const box = {
-      id,
-      name: data.name,
-      color: data.color,
-      contents: data.contents,
-      meta,
-    };
     const action = isEditing ? updateBox : addBox;
-    action(box);
+    action({
+      ...data,
+      id,
+      meta,
+    });
     setOpen(false);
   };
 
@@ -136,7 +136,7 @@ export function BoxDialog() {
                   <FormItem className='grid gap-3 color-picker'>
                     <Label htmlFor='color'>Color</Label>
                     <FormControl>
-                      <HexColorPicker {...field} />
+                      <HexColorPicker color={field.value} onChange={field.onChange} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -145,17 +145,30 @@ export function BoxDialog() {
                 {fields.map(({ id }, index) => (
                   <div key={id} className='flex flex-col gap-3'>
                     <div className='flex flex-row w-full justify-between'>
-                      <FormField
-                        control={form.control}
-                        name={`contents.${index}.key`}
-                        render={({ field }) => (
-                          <FormItem className='grid gap-1'>
-                            <FormControl>
-                              <Input placeholder='Label' {...field} />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
+                      <div className='flex gap-1'>
+                        <FormField
+                          control={form.control}
+                          name={`contents.${index}.label`}
+                          render={({ field }) => (
+                            <FormItem className='grid gap-0'>
+                              <FormControl>
+                                <Input placeholder='Label' {...field} />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`contents.${index}.key`}
+                          render={({ field }) => (
+                            <FormItem className='grid gap-1 max-w-1/3'>
+                              <FormControl>
+                                <Input tabIndex={-1} placeholder='Key' {...field} />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                       <div className='flex'>
                         <Button
                           tabIndex={-1}
@@ -173,7 +186,7 @@ export function BoxDialog() {
                           type='button'
                           hidden={index !== fields.length - 1}
                           variant='ghost'
-                          onClick={() => append({ key: '', value: '' })}
+                          onClick={() => append({ label: '', value: '', key: `$${fields.length + 1}`, expression: '' })}
                         >
                           <PlusCircle />
                         </Button>
@@ -181,7 +194,7 @@ export function BoxDialog() {
                     </div>
                     <FormField
                       control={form.control}
-                      name={`contents.${index}.value`}
+                      name={`contents.${index}.expression`}
                       render={({ field }) => (
                         <FormItem className='grid gap-1 w-full'>
                           <FormControl className='w-full'>

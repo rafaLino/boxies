@@ -6,7 +6,8 @@ import { verifySession } from '@/lib/session';
 
 
 export async function getBoxes(): Promise<TBox[]> {
-    const boxes = await BoxModel.find<IBoxModel>()
+    const session = await verifySession();
+    const boxes = await BoxModel.find<IBoxModel>({ userId: session.userId })
     return boxes.map(item => ({
         id: item._id.toString(),
         name: item.name,

@@ -1,5 +1,6 @@
 import { TContent } from '@/types/box.type';
 import Mexp from 'math-expression-evaluator'
+import { keyRegex, operatorRegex, valueRegex } from './regex';
 
 const mexp = new Mexp();
 
@@ -10,19 +11,16 @@ function evalMathExpression(expression: string) {
 function hasKeyAndMathOperator(expression: string | undefined) {
     if (!expression) return false;
 
-    const labelKeyRegex = /(\$[a-zA-Z0-9]+)/;
-    const operatorRegex = /[+\-*/]/;
-
-    return labelKeyRegex.test(expression) && operatorRegex.test(expression);
+    return keyRegex.test(expression) && operatorRegex.test(expression);
 }
 
 function replaceValue(value: string) {
-    const matchedValue = value.match(/[\d.,]+/g);
+    const matchedValue = value.match(valueRegex);
     return matchedValue ? matchedValue[0].replace(',', '.') : value;
 }
 
 function transformExpression(expression: string, contents: TContent[]): string {
-    const formattedExpression = expression.replace(/(\$[a-zA-Z0-9]+)/g, (match, key) => {
+    const formattedExpression = expression.replace(keyRegex, (match, key) => {
         const content = contents.find(x => x.key === key)
         if (!content) return match
 

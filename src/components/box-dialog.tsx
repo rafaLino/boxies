@@ -58,7 +58,7 @@ export function BoxDialog() {
 
   const selectedBox = useBoxStore((state) => {
     const selectedBoxId = state.selectedBoxId;
-    return selectedBoxId ? state.boxes.value?.find((box) => box.id === selectedBoxId) : undefined;
+    return state.boxes.value?.find((box) => box.id === selectedBoxId);
   });
 
   const setOpen = useBoxStore((state) => state.setBoxDialogOpen);
@@ -142,10 +142,11 @@ export function BoxDialog() {
                 )}
               />
               <div className='grid gap-3 mt-2 p-2 max-h-80 overflow-x-auto scrollbar'>
-                {fields.map(({ id }, index) => (
+                {fields.map(({ id, key }, index) => (
                   <div key={id} className='flex flex-col gap-3'>
                     <div className='flex flex-row w-full justify-between'>
                       <div className='flex gap-1'>
+
                         <FormField
                           control={form.control}
                           name={`contents.${index}.label`}
@@ -157,17 +158,9 @@ export function BoxDialog() {
                             </FormItem>
                           )}
                         />
-                        <FormField
-                          control={form.control}
-                          name={`contents.${index}.key`}
-                          render={({ field }) => (
-                            <FormItem className='grid gap-1 max-w-1/3'>
-                              <FormControl>
-                                <Input tabIndex={-1} placeholder='Key' {...field} />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
+                        <div className='flex items-center gap-1 px-2 text-gray-500'>
+                          <span>{key}</span>
+                        </div>
                       </div>
                       <div className='flex'>
                         <Button
@@ -198,16 +191,19 @@ export function BoxDialog() {
                       render={({ field }) => (
                         <FormItem className='grid gap-1 w-full'>
                           <FormControl className='w-full'>
-                            <Textarea placeholder='Value' rows={1} className='resize-none' {...field} />
+                            <Textarea
+                              {...field}
+                              placeholder='Value'
+                              rows={1}
+                              className='resize-none'
+                            />
                           </FormControl>
                         </FormItem>
                       )}
                     />
 
-
                   </div>
                 ))}
-
               </div>
             </div>
             <DialogFooter className='mt-4'>

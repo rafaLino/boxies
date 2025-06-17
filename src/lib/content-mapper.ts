@@ -8,8 +8,11 @@ function evalMathExpression(expression: string) {
     return mexp.eval(expression).toString();
 }
 
-function hasKeyAndMathOperator(expression: string | undefined) {
+function isExpression(expression: string | undefined) {
     if (!expression) return false;
+
+    if (expression.startsWith('[text]'))
+        return false;
 
     return keyRegex.test(expression) && operatorRegex.test(expression);
 }
@@ -19,12 +22,19 @@ function replaceValue(value: string) {
     return matchedValue ? matchedValue[0].replace(',', '.') : value;
 }
 
+function replaceText(expression: string): string {
+    if (expression.startsWith('[text]')) {
+        return expression.replace('[text]', '').trim();
+    }
+    return expression;
+}
+
 function transformExpression(expression: string, contents: TContent[]): string {
     const formattedExpression = expression.replace(keyRegex, (match, key) => {
         const content = contents.find(x => x.key === key)
         if (!content) return match
 
-        if (hasKeyAndMathOperator(content.expression)) {
+        if (isExpression(content.expression)) {
             return transformExpression(content.expression, contents)
         }
         return replaceValue(content.expression)
@@ -34,12 +44,14 @@ function transformExpression(expression: string, contents: TContent[]): string {
 
 export function evalValue(input: TContent[]): TContent[] {
     const contents = input.map(({ key, expression, label }) => {
-        if (hasKeyAndMathOperator(expression)) {
+        if (isExpression(expression)) {
             const value = transformExpression(expression, input);
             return ({ label, key, value, expression })
         }
-        return ({ label, key, value: expression, expression })
+        return ({ label, key, value: replaceText(expression), expression })
     })
 
     return contents;
 }
+
+

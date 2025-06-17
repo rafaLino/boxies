@@ -10,8 +10,8 @@ export function generateId(): string {
   return crypto.randomUUID()
 }
 
-export function formatNumber(value: string): string {
-  if (isNaN(parseFloat(value))) {
+export function format(value: string): string {
+  if (isNaN(parseFloat(value)) || value.length > 20) {
     return value;
   }
   return new Intl.NumberFormat('pt-BR', {

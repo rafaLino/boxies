@@ -1,4 +1,4 @@
-import { cn, formatNumber } from "@/lib/utils"
+import { cn, format } from "@/lib/utils"
 import { FC, memo } from "react"
 import { CardDescription } from "./ui/card"
 
@@ -10,7 +10,7 @@ export const Content: FC<{ label: string, value?: string, color: string }> = mem
     return (
         <div key={label} className={cn('flex gap-2 justify-between w-full', flexDirection)}>
             <span className={cn('capitalize font-bold', color)}>{label}</span>
-            <CardDescription className={color}>{formatNumber(value)}</CardDescription>
+            <CardDescription className={color}>{format(value)}</CardDescription>
         </div>
     )
 })
